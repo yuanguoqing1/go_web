@@ -1,23 +1,24 @@
 package main
 
 import (
-	"hope_blog/internal/repository"
-	"hope_blog/pkg/logger"
+	"database/sql"
 
-	"github.com/gin-gonic/gin"
+	db "hope_blog/internal/repository"
+
+	log "hope_blog/pkg/logger"
 )
 
-func main() {
-	// 初始化数据库
-	_, err := repository.InitDB()
+// 连接数据库
+func db_init() *sql.DB {
+	db, err := db.ConnectDB()
 	if err != nil {
-		logger.Log.Fatal("Failed to initialize database: ", err)
+		//数据库连接失败抛异常
+		panic("test panic")
 	}
-	//初始化路由
-	router := gin.Default()
-	router.LoadHTMLGlob("../templates/*")
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(200, "index.html", nil)
-	})
-	router.Run(":8080")
+	return db
+}
+func main() {
+	log.Info("Starting hope_blog")
+	database := db_init()
+	defer database.Close()
 }
