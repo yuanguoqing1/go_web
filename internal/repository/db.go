@@ -26,3 +26,21 @@ func ConnectDB() (*sql.DB, error) {
 	}
 	return db, nil
 }
+
+// 验证用户登录
+func ValidateUser(username, password string) bool {
+	// 查询用户
+	query := `SELECT password FROM users WHERE username = ?`
+	var dbPassword string
+	err := db.QueryRow(query, username).Scan(&dbPassword)
+	if err != nil {
+		return false
+	}
+
+	// 比较密码
+	if dbPassword == password {
+		return true
+	}
+
+	return false
+}
